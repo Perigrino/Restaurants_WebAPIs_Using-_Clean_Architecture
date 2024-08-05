@@ -1,6 +1,53 @@
+@host = https://localhost
+@port = 5230
+
 @Restaurants.API_HostAddress = http://localhost:5230
 
-GET {{Restaurants.API_HostAddress}}/weatherforecast/
-Accept: application/json
+
+GET {{Restaurants.API_HostAddress}}/api/restaurants
+
+###
+
+GET {{Restaurants.API_HostAddress}}/api/restaurants/145
+
+
+###
+
+DELETE {{Restaurants.API_HostAddress}}/api/restaurants/1006
+
+
+###
+
+POST {{Restaurants.API_HostAddress}}/api/restaurants
+Content-Type: application/json
+
+{
+  "Name": "Tasty Tests2",
+  "Description": "A cozy restaurant serving a variety of delicious dishes.",
+  "Category": "Indian",
+  "HasDelivery": true,
+  "ContactEmail": "info@test.com",
+  "ContactNumber": "555-1234",
+  "City": "New York",
+  "Street": "123 Main Street",
+  "PostalCode": "10-010"
+}
+
+###
+
+GET https://localhost:7005/api/restaurants/1007
+
+
+###
+
+
+PATCH {{Restaurants.API_HostAddress}}/api/restaurants/1010
+Content-Type: application/json
+
+{
+  "Name": "Sample patch2",
+  "Description": "This is a sample restaurant description.",
+  "HasDelivery": false
+}
 
 ###
