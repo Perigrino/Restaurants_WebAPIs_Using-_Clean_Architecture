@@ -5,27 +5,13 @@ using Restaurants.Domain.Entites;
 
 namespace Restaurants.Infrastructure.Persistence;
 
-public class RestaurantDbContext :DbContext
+public class RestaurantDbContext(DbContextOptions options) : DbContext(options)
 {
-    
-    public RestaurantDbContext(DbContextOptions options) : base(options)
-    {
-    }
-    
     internal DbSet<Restaurant> Restaurants { get; set; }
     internal DbSet<Dish> Dishes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        // if (!optionsBuilder.IsConfigured)
-        // {
-        //     IConfigurationRoot configuration = new ConfigurationBuilder()
-        //         .SetBasePath(Directory.GetCurrentDirectory())
-        //         .AddJsonFile("appsettings.json")
-        //         .Build();
-        //     var connectionString = configuration.GetConnectionString("DbCoreConnectionString");
-        //     optionsBuilder.UseNpgsql(connectionString);
-        // }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
