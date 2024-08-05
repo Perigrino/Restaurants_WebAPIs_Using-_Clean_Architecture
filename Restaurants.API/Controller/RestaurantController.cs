@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Restaurants.Application.Restaurants;
 
+
 namespace Restaurants.API.Controller
 {
     [Route("api/[controller]")]
@@ -17,9 +18,13 @@ namespace Restaurants.API.Controller
 
         // GET api/<RestaurantController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> GetRestaurantById (Guid id)
         {
-            return "value";
+            var restaurant = await restaurantService.GetAllRestaurantById(id);
+            if ( restaurant != null)
+                return Ok(restaurant);
+            
+            return NotFound();
         }
 
         // POST api/<RestaurantController>

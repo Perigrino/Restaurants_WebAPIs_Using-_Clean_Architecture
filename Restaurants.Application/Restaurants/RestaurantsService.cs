@@ -12,4 +12,18 @@ internal class RestaurantsService(IRestaurantRepository restaurantRepository, IL
         var restaurant = await restaurantRepository.GetRestaurantsAsync();
         return restaurant;
     }
+    public async Task<Restaurant?> GetAllRestaurantById(Guid id)
+    {
+        logger.LogInformation("Getting restaurant by id");
+        var restaurant = await restaurantRepository.GetRestaurantByIdAsync(id);
+        
+        if (restaurant == null)
+        {
+            logger.LogError($"Restaurant not found with id: {id}");
+            //throw new KeyNotFoundException($"Restaurant with id {id} not found.");
+            return null;
+            
+        }
+        return restaurant;
+    }
 }
