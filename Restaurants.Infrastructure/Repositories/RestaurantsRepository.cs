@@ -7,7 +7,7 @@ namespace Restaurants.Infrastructure.Repositories;
 
 public class RestaurantsRepository(RestaurantDbContext context) : IRestaurantRepository
 {
-    public async Task<IEnumerable<Restaurant>> GetRestaurantsAsync()
+    public async Task<IEnumerable<Restaurant>> GetAllRestaurantsAsync()
     {
         var restaurants = await context.Restaurants.ToListAsync();
         return restaurants;
@@ -21,6 +21,17 @@ public class RestaurantsRepository(RestaurantDbContext context) : IRestaurantRep
         if (restaurant != null) 
             return restaurant;
         
+        return null;
+    }
+
+    public async Task<Guid?> CreateRestaurantAsync(Restaurant? restaurant)
+    {
+        if (restaurant != null)
+        {
+            context.Restaurants.Add(restaurant);
+            await context.SaveChangesAsync();
+            return restaurant.Id;
+        }
         return null;
     }
 }
