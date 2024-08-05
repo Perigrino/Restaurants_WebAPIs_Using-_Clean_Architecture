@@ -1,4 +1,6 @@
-using Restaurants.Infrastructure.DependencyInjection;
+using Restaurants.Application.Extensions;
+using Restaurants.Infrastructure.Extensions;
+using Restaurants.Infrastructure.Seeder;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,8 +10,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructureService(builder.Configuration);
+builder.Services.AddApplication();
 
 var app = builder.Build();
+
+
+// Creates a scope for dependency injection and retrieves the required <see cref="IRestaurantSeeder"/> service.
+// Then, it calls the <see cref="Seed"/> method to populate the database with initial restaurant data.
+var scope = app.Services.CreateScope();
+var seeder = scope.ServiceProvider.GetRequiredService<IRestaurantSeeder>();
+await seeder.Seed();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -19,5 +30,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapControllers();
 
 app.Run();
