@@ -16,6 +16,7 @@ namespace Restaurants.API.Controller
     {
         // GET: api/<RestaurantController>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<RestaurantDto>>> GetAllRestaurants()
         {
             var restaurants = await mediator.Send( new GetAllRestaurantsQuery());
@@ -24,7 +25,7 @@ namespace Restaurants.API.Controller
 
         // GET api/<RestaurantController>/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetRestaurantById([FromRoute] Guid id)
+        public async Task<ActionResult<RestaurantDto?>> GetRestaurantById([FromRoute] Guid id)
         {
             var restaurant = await mediator.Send(new GetRestaurantByIdQuery(){ Id = id });
             if ( restaurant != null)
@@ -59,11 +60,12 @@ namespace Restaurants.API.Controller
 
         // PUT api/<RestaurantController>/5
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateRestaurant([FromRoute] Guid id, UpdateRestaurantCommand command)
         {
             command.Id = id;
             await mediator.Send(command);
-
             return NoContent();
         }
         

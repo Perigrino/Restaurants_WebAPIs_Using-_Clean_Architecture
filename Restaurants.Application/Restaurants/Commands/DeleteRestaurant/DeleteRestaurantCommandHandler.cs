@@ -9,11 +9,11 @@ public class DeleteRestaurantCommandHandler(ILogger<DeleteRestaurantCommandHandl
 {
     public async Task<bool> Handle(DeleteRestaurantCommand request, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Deleting restaurant with id : {RequestId}", request.Id);
+        logger.LogInformation("Deleting restaurant with id : {RestaurantId}", request.Id);
         var restaurant = await restaurantRepository.GetRestaurantByIdAsync(request.Id);
         if (restaurant == null)
         {
-            logger.LogWarning("Restaurant with id : {RequestId} not found", request.Id);
+            logger.LogWarning("Restaurant with id : {RestaurantId} not found", request.Id);
             return false;
         }
         await restaurantRepository.DeleteRestaurantAsync(restaurant);
