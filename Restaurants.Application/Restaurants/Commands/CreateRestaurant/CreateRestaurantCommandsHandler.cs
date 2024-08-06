@@ -13,7 +13,7 @@ public class CreateRestaurantCommandsHandler(ILogger<CreateRestaurantCommandsHan
     {
         logger.LogInformation("Creating a new restaurant");
         var restaurant = mapper.Map<Restaurant>(request);
-        var id = await restaurantRepository.CreateRestaurantAsync(restaurant);
+        var id = await restaurantRepository.UpdateRestaurantAsync(restaurant);
         return restaurant.Id;
     }
 }

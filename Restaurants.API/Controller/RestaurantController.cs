@@ -1,6 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Restaurants.Application.Restaurants.Commands.CreateRestaurant;
+using Restaurants.Application.Restaurants.Commands.DeleteRestaurant;
+using Restaurants.Application.Restaurants.Commands.UpdateRestaurant;
 using Restaurants.Application.Restaurants.Dtos;
 using Restaurants.Application.Restaurants.Queries.GetAllRestaurants;
 using Restaurants.Application.Restaurants.Queries.GetRestaurantById;
@@ -41,20 +43,29 @@ namespace Restaurants.API.Controller
             }
             var restaurant = await mediator.Send(command);
             return Ok("Restaurant created successfully.");
-
-            
+        }
+        
+        // DELETE api/<RestaurantController>/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteRestaurant ([FromRoute] Guid id)
+        {
+            var isDeleted = await mediator.Send(new DeleteRestaurantCommand(id));
+            if (isDeleted)
+            {
+                NoContent();
+            }
+            return NotFound(); 
         }
 
         // PUT api/<RestaurantController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> UpdateRestaurant([FromRoute] Guid id, UpdateRestaurantCommand command)
         {
-        }
+            command.Id = id;
+            await mediator.Send(command);
 
-        // DELETE api/<RestaurantController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return NoContent();
         }
+        
     }
 }

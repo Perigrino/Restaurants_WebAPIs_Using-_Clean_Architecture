@@ -1,11 +1,6 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Restaurants.Application.Restaurants;
-using Restaurants.Application.Restaurants.Dtos;
-using Restaurants.Application.Restaurants.Queries.GetAllRestaurants;
-using Restaurants.Domain.Repositories;
 
 namespace Restaurants.Application.Extensions;
 
