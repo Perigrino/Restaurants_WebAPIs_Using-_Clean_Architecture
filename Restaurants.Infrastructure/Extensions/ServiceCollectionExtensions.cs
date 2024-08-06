@@ -13,14 +13,15 @@ namespace Restaurants.Infrastructure.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddInfrastructureService(this IServiceCollection services, IConfiguration config)
+    public static void AddInfrastructureService(this IServiceCollection services, IConfiguration config)
     {
         services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore); 
         services.Configure<JsonOptions>(options => { options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; });
-        services.AddDbContext<RestaurantDbContext>(o => o.UseNpgsql(config.GetConnectionString("Default")));
+
+        var connectionString = config.GetConnectionString("Default");
+        services.AddDbContext<RestaurantDbContext>(o => o.UseNpgsql(connectionString).EnableSensitiveDataLogging());
         services.AddScoped<IRestaurantSeeder, RestaurantSeeders>();
         services.AddScoped<IRestaurantRepository, RestaurantsRepository>(); //RestaurantSeeders>();
-
-        return services;
+        
     }
 }

@@ -17,6 +17,7 @@
       <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="8.0.1" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+      <PackageReference Include="Serilog.AspNetCore.Plus" Version="8.0.0" />
     </ItemGroup>
 
     <ItemGroup>

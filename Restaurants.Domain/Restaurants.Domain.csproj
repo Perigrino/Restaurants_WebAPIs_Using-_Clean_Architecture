@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Serilog.AspNetCore.Plus" Version="8.0.0" />
+    </ItemGroup>
+
 </Project>

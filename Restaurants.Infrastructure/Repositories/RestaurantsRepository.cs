@@ -28,10 +28,32 @@ public class RestaurantsRepository(RestaurantDbContext context) : IRestaurantRep
     {
         if (restaurant != null)
         {
-            context.Restaurants.Add(restaurant);
+            await context.Restaurants.AddAsync(restaurant);
             await context.SaveChangesAsync();
             return restaurant.Id;
         }
         return null;
+    }
+
+    public async Task<Guid?> UpdateRestaurantAsync(Restaurant? restaurant)
+{
+    if (restaurant != null)
+    {
+        context.Restaurants.Update(restaurant);
+        await context.SaveChangesAsync();
+        return restaurant.Id;
+    }
+    return null;
+}
+
+    public async Task DeleteRestaurantAsync(Restaurant entity)
+    {
+        context.Restaurants.Remove(entity);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task SaveChangesAsync()
+    {
+        await context.SaveChangesAsync();
     }
 }

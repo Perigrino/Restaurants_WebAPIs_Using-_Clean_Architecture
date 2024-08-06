@@ -11,9 +11,9 @@ public class CreateRestaurantCommandsHandler(ILogger<CreateRestaurantCommandsHan
 {
     public async Task<Guid> Handle(CreateRestaurantCommand request, CancellationToken token)
     {
-        logger.LogInformation("Creating a new restaurant");
+        logger.LogInformation("Creating a new restaurant {@Restaurant}", request);
         var restaurant = mapper.Map<Restaurant>(request);
-        var id = await restaurantRepository.CreateRestaurantAsync(restaurant);
+        var id = await restaurantRepository.UpdateRestaurantAsync(restaurant);
         return restaurant.Id;
     }
 }
