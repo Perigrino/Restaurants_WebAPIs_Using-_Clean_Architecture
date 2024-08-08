@@ -27,35 +27,27 @@ namespace Restaurants.API.Controller
         [HttpGet("{id}")]
         public async Task<ActionResult<RestaurantDto?>> GetRestaurantById([FromRoute] Guid id)
         {
-            var restaurant = await mediator.Send(new GetRestaurantByIdQuery(){ Id = id });
-            if ( restaurant != null)
-                return Ok(restaurant);
+            var restaurant = await mediator.Send(new GetRestaurantByIdQuery { Id = id });
+            return Ok(restaurant);
             
-            return NotFound();
         }
 
         // POST api/<RestaurantController>
         [HttpPost]
-        public async Task<IActionResult> CreateRestaurant ([FromBody]CreateRestaurantCommand? command)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> CreateRestaurant ([FromBody]CreateRestaurantCommand command)
         {
-            if (command == null)
-            {
-                return BadRequest("Restaurant data cannot be null.");
-            }
             var restaurant = await mediator.Send(command);
-            return Ok("Restaurant created successfully.");
+            return CreatedAtAction(nameof(GetRestaurantById), new { restaurant }, null);
         }
         
         // DELETE api/<RestaurantController>/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRestaurant ([FromRoute] Guid id)
         {
-            var isDeleted = await mediator.Send(new DeleteRestaurantCommand(id));
-            if (isDeleted)
-            {
-                NoContent();
-            }
-            return NotFound(); 
+            await mediator.Send(new DeleteRestaurantCommand(id));
+            return NoContent(); 
         }
 
         // PUT api/<RestaurantController>/5
