@@ -9,7 +9,9 @@ public class RestaurantsRepository(RestaurantDbContext context) : IRestaurantRep
 {
     public async Task<IEnumerable<Restaurant>> GetAllRestaurantsAsync()
     {
-        var restaurants = await context.Restaurants.ToListAsync();
+        var restaurants = await context.Restaurants
+            .Include(r => r.Dishes)
+            .ToListAsync();
         return restaurants;
     }
 
