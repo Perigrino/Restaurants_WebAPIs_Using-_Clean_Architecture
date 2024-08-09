@@ -52,6 +52,22 @@ public class RestaurantsRepository(RestaurantDbContext context) : IRestaurantRep
         await context.SaveChangesAsync();
     }
 
+    public async Task<bool> DoesRestaurantExistByIdAsync(Guid id)
+    {
+        var restaurantExists = await context.Restaurants
+            .AnyAsync(r => r.Id == id);
+    
+        return restaurantExists;
+    }
+
+    public async Task<bool> DoesRestaurantExistByNameAsync(string name)
+    {
+        var restaurantExists = await context.Restaurants
+            .AnyAsync(r => r.Name == name);
+    
+        return restaurantExists;
+    }
+
     public async Task SaveChangesAsync()
     {
         await context.SaveChangesAsync();

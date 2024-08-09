@@ -39,7 +39,7 @@ namespace Restaurants.API.Controller
         public async Task<IActionResult> CreateRestaurant ([FromBody]CreateRestaurantCommand command)
         {
             var restaurant = await mediator.Send(command);
-            return CreatedAtAction(nameof(GetRestaurantById), new { restaurant }, null);
+            return Ok("Restaurant has been created successfully");
         }
         
         // DELETE api/<RestaurantController>/5
