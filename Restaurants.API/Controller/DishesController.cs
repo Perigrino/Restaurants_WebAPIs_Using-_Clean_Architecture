@@ -1,6 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Restaurants.Application.Dishes.Commands.CreateDish;
+using Restaurants.Application.Dishes.Dtos;
+using Restaurants.Application.Dishes.Queries.GetDishByIdForRestaurantQuery;
+using Restaurants.Application.Dishes.Queries.GetDishForRestaurant;
 
 namespace Restaurants.API.Controller
 {
@@ -10,16 +13,19 @@ namespace Restaurants.API.Controller
     {
         // GET: api/<DishesController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<ActionResult> GetAllDishesForRestaurant([FromRoute] Guid restaurantId)
         {
-            return new string[] { "value1", "value2" };
+            var dishes = await mediator.Send(new GetAllDishesForRestaurantQuery(restaurantId));
+            return Ok(dishes);
+
         }
 
         // GET api/<DishesController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{dishId}")]
+        public async Task<ActionResult<DishDto>> GetDishByIdForRestaurant([FromRoute] Guid restaurantId ,[FromRoute] Guid dishId)
         {
-            return "value";
+            var dish = await mediator.Send(new GetDishByIdForRestaurantQuery(restaurantId , dishId));
+            return Ok(dish);
         }
 
         // POST api/<DishesController>
