@@ -24,7 +24,7 @@ namespace Restaurants.API.Controller
         [HttpGet("{dishId}")]
         public async Task<ActionResult<DishDto>> GetDishByIdForRestaurant([FromRoute] Guid restaurantId ,[FromRoute] Guid dishId)
         {
-            var dish = await mediator.Send(new GetDishByIdForRestaurantQuery(restaurantId , dishId));
+            var dish = await mediator.Send(new GetDishByIdForRestaurantQuery(restaurantId, dishId));
             return Ok(dish);
         }
 
