@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using Serilog;
 using Restaurants.API.Middlewares;
 using Restaurants.Application.Extensions;
@@ -5,12 +6,10 @@ using Restaurants.Infrastructure.Extensions;
 using Restaurants.Infrastructure.Seeder;
 
 
-
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore); 
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
@@ -44,6 +43,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseRouting();
 
 app.UseHttpsRedirection();
 

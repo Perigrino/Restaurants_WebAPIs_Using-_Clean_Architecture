@@ -9,7 +9,9 @@ public class RestaurantsRepository(RestaurantDbContext context) : IRestaurantRep
 {
     public async Task<IEnumerable<Restaurant>> GetAllRestaurantsAsync()
     {
-        var restaurants = await context.Restaurants.ToListAsync();
+        var restaurants = await context.Restaurants
+            .Include(r => r.Dishes)
+            .ToListAsync();
         return restaurants;
     }
 
@@ -50,6 +52,22 @@ public class RestaurantsRepository(RestaurantDbContext context) : IRestaurantRep
     {
         context.Restaurants.Remove(entity);
         await context.SaveChangesAsync();
+    }
+
+    public async Task<bool> DoesRestaurantExistByIdAsync(Guid id)
+    {
+        var restaurantExists = await context.Restaurants
+            .AnyAsync(r => r.Id == id);
+    
+        return restaurantExists;
+    }
+
+    public async Task<bool> DoesRestaurantExistByNameAsync(string name)
+    {
+        var restaurantExists = await context.Restaurants
+            .AnyAsync(r => r.Name == name);
+    
+        return restaurantExists;
     }
 
     public async Task SaveChangesAsync()
