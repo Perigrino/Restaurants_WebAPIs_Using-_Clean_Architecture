@@ -1,26 +1,17 @@
-using Newtonsoft.Json;
+using Restaurants.API.Extensions;
 using Serilog;
 using Restaurants.API.Middlewares;
 using Restaurants.Application.Extensions;
+using Restaurants.Domain.Entities;
 using Restaurants.Infrastructure.Extensions;
 using Restaurants.Infrastructure.Seeder;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore); 
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddScoped<ErrorHandlingMiddleware>();
-builder.Services.AddScoped<RequestTimeLoggingMiddleware>();
-
-
+builder.AddPresentation();
 builder.Services.AddInfrastructureService(builder.Configuration);
 builder.Services.AddApplication();
-builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
-
-//builder.Services.AddEndpointsApiExplorer();
 
 
 var app = builder.Build();
@@ -32,7 +23,6 @@ await seeder.Seed();
 
 
 // Configure the HTTP request pipeline.
-
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseMiddleware<RequestTimeLoggingMiddleware>();
 
@@ -47,6 +37,8 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 
 app.UseHttpsRedirection();
+
+app.MapGroup("api/identity").WithTags("Identity").MapIdentityApi<User>();
 
 app.UseAuthorization();
 

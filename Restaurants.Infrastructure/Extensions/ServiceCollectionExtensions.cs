@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Restaurants.Domain.Entities;
 using Restaurants.Domain.IRepository;
 using Restaurants.Domain.Repositories;
 using Restaurants.Infrastructure.Persistence;
@@ -18,6 +19,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore); 
         services.Configure<JsonOptions>(options => { options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; });
+        services.AddIdentityApiEndpoints<User>().AddEntityFrameworkStores<RestaurantDbContext>();
 
         var connectionString = config.GetConnectionString("Default");
         services.AddDbContext<RestaurantDbContext>(o => o.UseNpgsql(connectionString).EnableSensitiveDataLogging());
