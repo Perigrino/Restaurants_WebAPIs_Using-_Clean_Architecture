@@ -17,7 +17,9 @@ public class UpdateRestaurantCommandHandler (ILogger<UpdateRestaurantCommandHand
         if (restaurant is null)
             throw new NotFoundException(nameof(Restaurant), request.Id.ToString());
         
-        mapper.Map(request, restaurant);
+        var mappedRestaurant = mapper.Map<Restaurant>(restaurant);
+        await restaurantRepository.UpdateRestaurantAsync(mappedRestaurant);
+        
         await restaurantRepository.SaveChangesAsync();
     }
 }

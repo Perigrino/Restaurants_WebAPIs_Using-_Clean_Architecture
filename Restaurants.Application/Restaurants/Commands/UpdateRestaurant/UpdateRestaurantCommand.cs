@@ -1,8 +1,9 @@
 using MediatR;
+using Restaurants.Domain.Entites;
 
 namespace Restaurants.Application.Restaurants.Commands.UpdateRestaurant;
 
-public class UpdateRestaurantCommand : IRequest
+public class UpdateRestaurantCommand  : IRequest
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = default!;
