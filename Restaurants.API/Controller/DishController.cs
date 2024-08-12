@@ -36,7 +36,14 @@ namespace Restaurants.API.Controller
         public async Task<ActionResult<DishDto>> GetDishByIdForRestaurant([FromRoute] Guid restaurantId ,[FromRoute] Guid dishId)
         {
             var dish = await mediator.Send(new GetDishByIdForRestaurantQuery(restaurantId, dishId));
-            return Ok(dish);
+            
+            var finalResponse = new FinalResponse<object>
+            {
+                StatusCode = 200,
+                Message = $"Dish with ID {dishId} has been successfully retrieved.",
+                Data = dish
+            };
+            return Ok(finalResponse);
         }
 
         // POST api/<DishController>
@@ -45,7 +52,14 @@ namespace Restaurants.API.Controller
         {
             command.RestaurantId = restaurantId;
             await mediator.Send(command);
-            return Created();
+            
+            var finalResponse = new FinalResponse<object>
+            {
+                StatusCode = 201,
+                Message = "Dish has been created successfully retrieved.",
+                Data = null
+            };
+            return Ok(finalResponse);
         }
 
         // PUT api/<DishController>/5
@@ -54,7 +68,14 @@ namespace Restaurants.API.Controller
         {
             command.Id = id;
             await mediator.Send(command);
-            return NoContent(); 
+            
+            var finalResponse = new FinalResponse<object>
+            {
+                StatusCode = 204,
+                Message = "Dish has been updated successfully retrieved.",
+                Data = null
+            };
+            return Ok(finalResponse); 
         }
 
         // DELETE api/<DishController>/5
@@ -63,7 +84,13 @@ namespace Restaurants.API.Controller
         {
             
             await mediator.Send(new DeleteDishCommand(restaurantId, id));
-            return NoContent(); 
+            var finalResponse = new FinalResponse<object>
+            {
+                StatusCode = 204,
+                Message = "Dish has been deleted successfully.",
+                Data = null
+            };
+            return Ok(finalResponse); 
         }
         
         // DELETE api/<DishController>/5
@@ -72,7 +99,13 @@ namespace Restaurants.API.Controller
         {
             
             await mediator.Send(new DeleteDishesCommand(restaurantId));
-            return NoContent(); 
+            var finalResponse = new FinalResponse<object>
+            {
+                StatusCode = 204,
+                Message = $"All dishes for restaurant{restaurantId} have been deleted successfully.",
+                Data = null
+            };
+            return Ok(finalResponse); 
         }
     }
 }
