@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Restaurants.Domain.Entites;
+using Restaurants.Domain.IRepository;
 using Restaurants.Domain.Repositories;
 using Restaurants.Infrastructure.Persistence;
 
@@ -6,45 +8,43 @@ namespace Restaurants.Infrastructure.Repositories;
 
 public class DishRepository(RestaurantDbContext context) : IDishRepository
 {
-    public async Task<IEnumerable<Dish>> GetAllDishesAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<Dish?> GetDishByIdAsync(Guid id)
-    {
-        throw new NotImplementedException();
-    }
-
+    
     public async Task<Guid?> CreateDishAsync(Dish entity)
     {
         await context.Dishes.AddAsync(entity);
-        await context.SaveChangesAsync();
+        await SaveChangesAsync();
         return entity.Id;
     }
 
-    public async Task<Guid?> UpdateDishAsync(Dish? entity)
+    public async Task<Dish?> GetDishByIdAsync (Guid id)
     {
-        throw new NotImplementedException();
+        var dish = await context.Dishes.FirstOrDefaultAsync(d => d.Id == id);
+        if (dish != null) 
+            return dish;
+        
+        return null;
     }
 
-    public async Task DeleteDishAsync(Dish entity)
+    public async Task UpdateDishByIdAsync(Dish? entity)
     {
-        throw new NotImplementedException();
+        context.Dishes.Update(entity);
+        await SaveChangesAsync();
     }
 
-    public async Task<bool> DoesDishExistByIdAsync(Guid id)
+    public async Task DeleteDishByIdAsync(Dish entity)
     {
-        throw new NotImplementedException();
+        context.Dishes.Remove(entity);
+        await SaveChangesAsync();
     }
-
-    public async Task<bool> DoesDishExistByNameAsync(string name)
+    
+    public async Task DeleteDishesAsync(IEnumerable<Dish> entity)
     {
-        throw new NotImplementedException();
+        context.Dishes.RemoveRange(entity);
+        await SaveChangesAsync();
     }
 
     public async Task SaveChangesAsync()
     {
-        throw new NotImplementedException();
+        await context.SaveChangesAsync();
     }
 }

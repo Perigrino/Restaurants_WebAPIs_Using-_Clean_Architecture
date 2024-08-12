@@ -38,7 +38,7 @@ namespace Restaurants.API.Controller
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CreateRestaurant ([FromBody]CreateRestaurantCommand command)
         {
-            var restaurant = await mediator.Send(command);
+            await mediator.Send(command);
             return Ok("Restaurant has been created successfully");
         }
         
