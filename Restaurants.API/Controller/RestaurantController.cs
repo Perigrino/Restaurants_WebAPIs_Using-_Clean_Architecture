@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using RefsGuy.Contracts.Responses;
 using Restaurants.Application.Restaurants.Commands.CreateRestaurant;
 using Restaurants.Application.Restaurants.Commands.DeleteRestaurant;
 using Restaurants.Application.Restaurants.Commands.UpdateRestaurant;
@@ -20,7 +21,13 @@ namespace Restaurants.API.Controller
         public async Task<ActionResult<IEnumerable<RestaurantDto>>> GetAllRestaurants()
         {
             var restaurants = await mediator.Send( new GetAllRestaurantsQuery());
-            return Ok(restaurants);
+            var finalResponse = new FinalResponse<object>
+            {
+                StatusCode = 200,
+                Message = $"All restaurants have been successfully retrieved",
+                Data = restaurants
+            };
+            return Ok(finalResponse); 
         }
 
         // GET api/<RestaurantController>/5
@@ -28,7 +35,14 @@ namespace Restaurants.API.Controller
         public async Task<ActionResult<RestaurantDto?>> GetRestaurantById([FromRoute] Guid id)
         {
             var restaurant = await mediator.Send(new GetRestaurantByIdQuery { Id = id });
-            return Ok(restaurant);
+            var finalResponse = new FinalResponse<object>
+            {
+                StatusCode = 200,
+                Message = $"Restaurant with ID {id} has been successfully retrieved",
+                Data = restaurant
+            };
+            
+            return Ok(finalResponse);
             
         }
 
@@ -39,17 +53,17 @@ namespace Restaurants.API.Controller
         public async Task<IActionResult> CreateRestaurant ([FromBody]CreateRestaurantCommand command)
         {
             await mediator.Send(command);
-            return Ok("Restaurant has been created successfully");
+            var finalResponse = new FinalResponse<object>
+            {
+                StatusCode = 201,
+                Message = "Restaurant has been created successfully retrieved.",
+                Data = null
+            };
+            return Ok(finalResponse);
+
         }
         
-        // DELETE api/<RestaurantController>/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRestaurant ([FromRoute] Guid id)
-        {
-            await mediator.Send(new DeleteRestaurantCommand(id));
-            return NoContent(); 
-        }
-
+        
         // PUT api/<RestaurantController>/5
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -58,8 +72,31 @@ namespace Restaurants.API.Controller
         {
             command.Id = id;
             await mediator.Send(command);
-            return NoContent();
+            var finalResponse = new FinalResponse<object>
+            {
+                StatusCode = 204,
+                Message = $"Restaurant with ID:{id} has been updated successfully retrieved.",
+                Data = null
+            };
+            return Ok(finalResponse);
         }
+        
+        
+        // DELETE api/<RestaurantController>/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteRestaurant ([FromRoute] Guid id)
+        {
+            await mediator.Send(new DeleteRestaurantCommand(id));
+            var finalResponse = new FinalResponse<object>
+            {
+                StatusCode = 204,
+                Message = "Restaurant has been deleted successfully retrieved.",
+                Data = null
+            };
+            return Ok(finalResponse);
+        }
+
+
         
     }
 }
