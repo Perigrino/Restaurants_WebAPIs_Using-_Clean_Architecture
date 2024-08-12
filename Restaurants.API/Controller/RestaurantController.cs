@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RefsGuy.Contracts.Responses;
 using Restaurants.Application.Restaurants.Commands.CreateRestaurant;
@@ -13,11 +14,12 @@ namespace Restaurants.API.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RestaurantController(IMediator mediator) : ControllerBase
     {
         // GET: api/<RestaurantController>
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<RestaurantDto>>> GetAllRestaurants()
         {
             var restaurants = await mediator.Send( new GetAllRestaurantsQuery());
@@ -56,7 +58,7 @@ namespace Restaurants.API.Controller
             var finalResponse = new FinalResponse<object>
             {
                 StatusCode = 201,
-                Message = "Restaurant has been created successfully retrieved.",
+                Message = "Restaurant has been created successfully.",
                 Data = null
             };
             return Ok(finalResponse);
@@ -75,7 +77,7 @@ namespace Restaurants.API.Controller
             var finalResponse = new FinalResponse<object>
             {
                 StatusCode = 204,
-                Message = $"Restaurant with ID:{id} has been updated successfully retrieved.",
+                Message = $"Restaurant with ID:{id} has been updated successfully.",
                 Data = null
             };
             return Ok(finalResponse);
@@ -90,7 +92,7 @@ namespace Restaurants.API.Controller
             var finalResponse = new FinalResponse<object>
             {
                 StatusCode = 204,
-                Message = "Restaurant has been deleted successfully retrieved.",
+                Message = "Restaurant has been deleted successfully.",
                 Data = null
             };
             return Ok(finalResponse);

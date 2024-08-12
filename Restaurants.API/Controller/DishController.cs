@@ -56,7 +56,7 @@ namespace Restaurants.API.Controller
             var finalResponse = new FinalResponse<object>
             {
                 StatusCode = 201,
-                Message = "Dish has been created successfully retrieved.",
+                Message = "Dish has been created successfully.",
                 Data = null
             };
             return Ok(finalResponse);
@@ -72,7 +72,7 @@ namespace Restaurants.API.Controller
             var finalResponse = new FinalResponse<object>
             {
                 StatusCode = 204,
-                Message = "Dish has been updated successfully retrieved.",
+                Message = "Dish has been updated successfully.",
                 Data = null
             };
             return Ok(finalResponse); 
