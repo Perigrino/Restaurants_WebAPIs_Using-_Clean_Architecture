@@ -8,6 +8,7 @@ using Restaurants.Application.Restaurants.Commands.UpdateRestaurant;
 using Restaurants.Application.Restaurants.Dtos;
 using Restaurants.Application.Restaurants.Queries.GetAllRestaurants;
 using Restaurants.Application.Restaurants.Queries.GetRestaurantById;
+using Restaurants.Domain.Constants;
 
 
 namespace Restaurants.API.Controller
@@ -50,6 +51,7 @@ namespace Restaurants.API.Controller
 
         // POST api/<RestaurantController>
         [HttpPost]
+        [Authorize(Roles = UserRoles.Owner)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CreateRestaurant ([FromBody]CreateRestaurantCommand command)

@@ -19,7 +19,7 @@ public class UserContext (IHttpContextAccessor httpContextAccessor) : IUserConte
 
         if (user.Identity == null || !user.Identity.IsAuthenticated)
         {
-            return null;
+            return null;  
         }
 
         var userId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
