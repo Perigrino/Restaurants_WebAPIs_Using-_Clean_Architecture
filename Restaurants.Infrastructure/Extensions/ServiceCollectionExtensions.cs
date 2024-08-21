@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Restaurants.Domain.Entities;
 using Restaurants.Domain.IRepository;
 using Restaurants.Domain.Repositories;
+using Restaurants.Infrastructure.Authorisation;
 using Restaurants.Infrastructure.Persistence;
 using Restaurants.Infrastructure.Repositories;
 using Restaurants.Infrastructure.Seeder;
@@ -24,7 +25,7 @@ public static class ServiceCollectionExtensions
 
         services.AddIdentityApiEndpoints<User>()
             .AddRoles<IdentityRole>()
-            //.AddClaimsPrincipalFactory<RestaurantsUserClaimsPrincipalFactory>()
+            .AddClaimsPrincipalFactory<RestaurantsUserClaimsPrincipalFactory>()
             .AddEntityFrameworkStores<RestaurantDbContext>();
             
 
