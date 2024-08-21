@@ -10,6 +10,7 @@ using Restaurants.Domain.Entities;
 using Restaurants.Domain.IRepository;
 using Restaurants.Domain.Repositories;
 using Restaurants.Infrastructure.Authorisation;
+using Restaurants.Infrastructure.Authorisation.Requirements;
 using Restaurants.Infrastructure.Persistence;
 using Restaurants.Infrastructure.Repositories;
 using Restaurants.Infrastructure.Seeder;
@@ -35,15 +36,15 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRestaurantSeeder, RestaurantSeeders>();
         services.AddScoped<IDishRepository, DishRepository>();
         services.AddScoped<IRestaurantRepository, RestaurantsRepository>(); //RestaurantSeeders>();
-        // services.AddAuthorizationBuilder()
-        //     .AddPolicy(PolicyNames.HasNationality, 
-        //         builder => builder.RequireClaim(AppClaimTypes.Nationality, "German", "Polish"))
-        //     .AddPolicy(PolicyNames.AtLeast20,
-        //         builder => builder.AddRequirements(new MinimumAgeRequirement(20)))
-        //     .AddPolicy(PolicyNames.CreatedAtleast2Restaurants, 
-        //         builder => builder.AddRequirements(new CreatedMultipleRestaurantsRequirement(2)));
-        //
-        // services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>();
+        services.AddAuthorizationBuilder()
+            .AddPolicy(PolicyNames.HasNationality,
+                builder => builder.RequireClaim(AppClaimTypes.Nationality, "Ghanaian", "Brazilian"))
+            .AddPolicy(PolicyNames.AtLeast20,
+                builder => builder.AddRequirements(new MinimumAgeRequirement(20)));
+            //.AddPolicy(PolicyNames.CreatedAtleast2Restaurants, 
+             //   builder => builder.AddRequirements(new CreatedMultipleRestaurantsRequirement(2)));
+        
+        services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>();
         // services.AddScoped<IAuthorizationHandler, CreatedMultipleRestaurantsRequirementHandler>();
         // services.AddScoped<IRestaurantAuthorizationService, RestaurantAuthorizationService>();
     }
