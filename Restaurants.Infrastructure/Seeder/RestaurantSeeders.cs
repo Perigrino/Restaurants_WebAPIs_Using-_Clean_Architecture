@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Restaurants.Domain.Constants;
 using Restaurants.Domain.Entites;
+using Restaurants.Domain.Entities;
 using Restaurants.Infrastructure.Persistence;
 
 namespace Restaurants.Infrastructure.Seeder;

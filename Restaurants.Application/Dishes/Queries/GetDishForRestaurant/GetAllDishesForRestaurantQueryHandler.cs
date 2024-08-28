@@ -3,8 +3,9 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Restaurants.Application.Dishes.Dtos;
 using Restaurants.Domain.Entites;
+using Restaurants.Domain.Entities;
 using Restaurants.Domain.Exceptions;
-using Restaurants.Domain.Repositories;
+using Restaurants.Domain.IRepository;
 
 
 namespace Restaurants.Application.Dishes.Queries.GetDishForRestaurant;

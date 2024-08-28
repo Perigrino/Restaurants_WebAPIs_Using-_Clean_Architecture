@@ -8,9 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Restaurants.Domain.Entities;
 using Restaurants.Domain.IRepository;
-using Restaurants.Domain.Repositories;
 using Restaurants.Infrastructure.Authorisation;
 using Restaurants.Infrastructure.Authorisation.Requirements;
+using Restaurants.Infrastructure.Authorisation.Services;
 using Restaurants.Infrastructure.Persistence;
 using Restaurants.Infrastructure.Repositories;
 using Restaurants.Infrastructure.Seeder;
@@ -26,7 +26,7 @@ public static class ServiceCollectionExtensions
 
         services.AddIdentityApiEndpoints<User>()
             .AddRoles<IdentityRole>()
-            .AddClaimsPrincipalFactory<RestaurantsUserClaimsPrincipalFactory>()
+            .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory>()
             .AddEntityFrameworkStores<RestaurantDbContext>();
             
 
@@ -46,6 +46,6 @@ public static class ServiceCollectionExtensions
         
         services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>();
         // services.AddScoped<IAuthorizationHandler, CreatedMultipleRestaurantsRequirementHandler>();
-        // services.AddScoped<IRestaurantAuthorizationService, RestaurantAuthorizationService>();
+        services.AddScoped<IAuthorisationService, AuthorisationService>();
     }
 }

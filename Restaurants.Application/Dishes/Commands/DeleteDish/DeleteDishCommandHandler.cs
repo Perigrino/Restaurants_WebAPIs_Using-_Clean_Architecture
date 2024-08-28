@@ -1,9 +1,9 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Restaurants.Domain.Entites;
+using Restaurants.Domain.Entities;
 using Restaurants.Domain.Exceptions;
 using Restaurants.Domain.IRepository;
-using Restaurants.Domain.Repositories;
 using ILogger = Serilog.ILogger;
 
 
