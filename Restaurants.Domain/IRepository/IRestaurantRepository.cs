@@ -1,6 +1,6 @@
-using Restaurants.Domain.Entites;
+using Restaurants.Domain.Entities;
 
-namespace Restaurants.Domain.Repositories;
+namespace Restaurants.Domain.IRepository;
 
 public interface IRestaurantRepository
 {

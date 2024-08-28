@@ -4,8 +4,9 @@ using Microsoft.Extensions.Logging;
 using Restaurants.Application.Restaurants.Dtos;
 using Restaurants.Application.Restaurants.Queries.GetAllRestaurants;
 using Restaurants.Domain.Entites;
+using Restaurants.Domain.Entities;
 using Restaurants.Domain.Exceptions;
-using Restaurants.Domain.Repositories;
+using Restaurants.Domain.IRepository;
 
 namespace Restaurants.Application.Restaurants.Queries.GetRestaurantById;
 

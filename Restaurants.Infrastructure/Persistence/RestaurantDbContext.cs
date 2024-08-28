@@ -26,7 +26,10 @@ public class RestaurantDbContext(DbContextOptions options) : IdentityDbContext<U
             .HasMany(d => d.Dishes)
             .WithOne()
             .HasForeignKey(d => d.RestaurantId);
-        
+        modelBuilder.Entity<User>()
+            .HasMany(o => o.OwnedRestaurants)
+            .WithOne(o => o.Owner)
+            .HasForeignKey(o => o.OwnerId);
     }
 }
 

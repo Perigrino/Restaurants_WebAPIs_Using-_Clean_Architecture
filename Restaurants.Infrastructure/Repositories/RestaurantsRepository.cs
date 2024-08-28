@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Restaurants.Domain.Entites;
-using Restaurants.Domain.Repositories;
+using Restaurants.Domain.Entities;
+using Restaurants.Domain.IRepository;
 using Restaurants.Infrastructure.Persistence;
 
 namespace Restaurants.Infrastructure.Repositories;

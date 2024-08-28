@@ -31,6 +31,25 @@ public class ErrorHandlingMiddleware(ILogger<ErrorHandlingMiddleware> logger) : 
             await context.Response.WriteAsJsonAsync(problemDetails);
 
         }
+
+        catch (ForbiddenException exception)
+        {
+            var traceId = Guid.NewGuid();
+            logger.LogError("Error occured while processing the request, TraceId : ${TraceId}, " +
+                            "Message : ${ExMessage}, StackTrace: ${ExStackTrace}", traceId, exception.Message, exception.StackTrace);
+
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            var problemDetails = new ProblemDetails
+            {
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+                Title = "Internal Server Error",
+                Status = (int)StatusCodes.Status403Forbidden,
+                Instance = context.Request.Path,
+                Detail = $"Access denied. You do not have permission to access this resource, traceId : {traceId}",
+            };
+            await context.Response.WriteAsJsonAsync(problemDetails);
+        }
+        
         
         catch (Exception ex)
         {
@@ -49,5 +68,6 @@ public class ErrorHandlingMiddleware(ILogger<ErrorHandlingMiddleware> logger) : 
             };
             await context.Response.WriteAsJsonAsync(problemDetails);
         }
+        
     }
 }
