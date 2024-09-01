@@ -13,7 +13,7 @@ public class UpdateRestaurantCommandHandler (
     ILogger<UpdateRestaurantCommandHandler> logger, 
     IMapper mapper, 
     IRestaurantRepository restaurantRepository,
-    IAuthorisationService authorisationService) :IRequestHandler<UpdateRestaurantCommand>
+    IAuthorizationService authorizationService) :IRequestHandler<UpdateRestaurantCommand>
 {
     public async Task Handle(UpdateRestaurantCommand request , CancellationToken cancellationToken)
     {
@@ -22,7 +22,7 @@ public class UpdateRestaurantCommandHandler (
         if (restaurant is null)
             throw new NotFoundException(nameof(Restaurant), request.Id.ToString());
         
-        if (!authorisationService.Authorise(restaurant, ResourceOperation.Delete))
+        if (!authorizationService.Authorise(restaurant, ResourceOperation.Delete))
             throw new ForbiddenException("User does not have permission to update this restaurant");
 
         

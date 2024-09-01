@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Restaurants.Application.Users;
 using Restaurants.Domain.Entities;
 using Restaurants.Domain.IRepository;
 using Restaurants.Infrastructure.Authorisation;
@@ -14,6 +15,7 @@ using Restaurants.Infrastructure.Authorisation.Services;
 using Restaurants.Infrastructure.Persistence;
 using Restaurants.Infrastructure.Repositories;
 using Restaurants.Infrastructure.Seeder;
+using IAuthorizationService = Restaurants.Domain.IRepository.IAuthorizationService;
 
 namespace Restaurants.Infrastructure.Extensions;
 
@@ -40,12 +42,12 @@ public static class ServiceCollectionExtensions
             .AddPolicy(PolicyNames.HasNationality,
                 builder => builder.RequireClaim(AppClaimTypes.Nationality, "Ghanaian", "Brazilian"))
             .AddPolicy(PolicyNames.AtLeast20,
-                builder => builder.AddRequirements(new MinimumAgeRequirement(20)));
-            //.AddPolicy(PolicyNames.CreatedAtleast2Restaurants, 
-             //   builder => builder.AddRequirements(new CreatedMultipleRestaurantsRequirement(2)));
+                builder => builder.AddRequirements(new MinimumAgeRequirement(20)))
+            .AddPolicy(PolicyNames.CreatedAtLeast2Restaurants, 
+            builder => builder.AddRequirements(new CreatedMultipleRestaurantsRequirement(2)));
         
         services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>();
-        // services.AddScoped<IAuthorizationHandler, CreatedMultipleRestaurantsRequirementHandler>();
-        services.AddScoped<IAuthorisationService, AuthorisationService>();
+        services.AddScoped<IAuthorizationHandler, CreatedMultipleRestaurantsRequirementHandler>();
+        services.AddScoped<IAuthorizationService, AuthorizationService>();
     }
 }

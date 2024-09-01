@@ -1,28 +1,47 @@
+
 @host = https://localhost
-@port = 5230
+@port = 7005
+@token = CfDJ8AHCTjzdeFVOpyQbYbe9sOKSBIELIc1POJtfLKwIJM7LJ651aYlc_g2BRZvdMtlpwWEMWrcUPQpXWtHULb6Brbdrh8fY-d-umfVa3xfs1yqVER01d_bJYu7ZA-90KpOlC6--KCvtB6dALnf0QkeXQ4ZIrBLp9C2_0kkinRQP0HWs8imWqBEaKzZiClbMAmTO8IdTwjoVpi_5_LjA3siG_Nip1GxKj06v7qcQyvoxLwkDG8jIkxukTsqW337T-coHpK8eQgxtOlbkRcPSgwJRriO9lqjBvlwp77HmhNTmCzGtAk6MUbpPQeO6Yni-FX0WqA-YiAIL7gw9luh78yJrMrXe-rJN6oBQQvoWVWwRgIr_BgS7rmRhbr_icXgmX9Yh7_Drm7lgPqkNWGvMwjPsveG86qSQQCSW0mGzH5I7Ug0edbw-KMSPSVj3dqcyDA4ZlBD2WOgDbYsPVs3H-maG1zO7_5MuJYUBykkirlK3iiDq0b0Q371B1-7ZHJmBKm17r6IH5wvu79jz_EUtAl-sTUUUjU6VO8oOXbSmaHlz2DezjxZ6ylWzYgZDMb1lo414cWGd8O9JhOx6Jx_I8xQui6Z-yfdEFgdBqMmsXy7LS6EkFkpaP9_DJ8F2FAorzE7OvlqLe4LSjQfPPX6TDf-4trgWeKL2veIwNw2z_00XtNGbyNrgVbBSAu34Sns-1WfEjUetML6Bn00pmdQ2Ep2AuILiSbKnFO6TkxU7mJ-MW-CkMwshJnr6u41lARGQacrEeu4bcVZKpw_FXi0B6_OxNgts32_E3KktbpP0AD7PfzPn
 
-@Restaurants.API_HostAddress = http://localhost:5230
+@Restaurants.API_HostAddress = https://localhost:7287
 
 
-GET {{Restaurants.API_HostAddress}}/api/restaurants
-
-###
-
-GET {{Restaurants.API_HostAddress}}/api/restaurants/145
-
+GET {{Restaurants.API_HostAddress}}/api/Restaurant
+Authorization: Bearer {{token}}
 
 ###
 
-DELETE {{Restaurants.API_HostAddress}}/api/restaurants/1006
+GET {{Restaurants.API_HostAddress}}/api/Restaurant/3
+Authorization: Bearer {{token}}
+
+###
+
+GET {{Restaurants.API_HostAddress}}/api/Restaurant/3/dishes
+Authorization: Bearer {{token}}
+
+###
+
+DELETE {{Restaurants.API_HostAddress}}/api/Restaurant/3/dishes
+
+###
+
+GET {{Restaurants.API_HostAddress}}/api/Restaurant/3/dishes/3
 
 
 ###
 
-POST {{Restaurants.API_HostAddress}}/api/restaurants
+DELETE {{Restaurants.API_HostAddress}}/api/restaurants/1009
+Authorization: Bearer {{token}}
+
+
+###
+
+POST {{Restaurants.API_HostAddress}}/api/Restaurant/
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "Name": "Tasty Tests2",
+  "Name": "Owner2 restaurant2",
   "Description": "A cozy restaurant serving a variety of delicious dishes.",
   "Category": "Indian",
   "HasDelivery": true,
@@ -35,19 +54,81 @@ Content-Type: application/json
 
 ###
 
-GET https://localhost:7005/api/restaurants/1007
+GET https://localhost:7005/api/Restaurant/1009
+Authorization: Bearer {{token}}
 
 
 ###
 
 
-PATCH {{Restaurants.API_HostAddress}}/api/restaurants/1010
+PUT {{Restaurants.API_HostAddress}}/api/Restaurant/1009
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "Name": "Updated name",
+  "Description": "This is a sample restaurant description.",
+  "HasDelivery": false
+}
+
+###
+
+POST {{Restaurants.API_HostAddress}}/api/restaurants/3/dishes
 Content-Type: application/json
 
 {
-  "Name": "Sample patch2",
-  "Description": "This is a sample restaurant description.",
-  "HasDelivery": false
+  "Name": "Spaghetti Bolognese",
+  "Description": "Classic Italian pasta dish with rich meat sauce",
+  "Price": 12.99,
+  "KiloCalories": 750
+}
+
+###
+
+GET https://localhost:7005/api/restaurants/3/dishes/7
+
+
+
+###
+
+POST {{Restaurants.API_HostAddress}}/api/identity/register
+Content-Type: application/json
+
+{
+  "email": "owner2@test.com",
+  "password": "Password1!"
+}
+
+###
+
+POST {{Restaurants.API_HostAddress}}/api/identity/login
+Content-Type: application/json
+
+{
+  "email": "owner2@test.com",
+  "password": "Password1!"
+}
+###
+
+PUT {{Restaurants.API_HostAddress}}/api/identity/user
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "Nationality": "Brazilian",
+  "DateOfBirth": "2010-01-01"
+}
+
+###
+
+
+POST {{Restaurants.API_HostAddress}}/api/identity/userRole
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "UserEmail": "owner2@test.com",
+  "RoleName": "Owner"
 }
 
 ###
