@@ -15,7 +15,7 @@ public class CreateDishCommandsHandler(
     IMapper mapper, 
     IRestaurantRepository restaurantRepository, 
     IDishRepository dishRepository,
-    IAuthorisationService authorisationService) : IRequestHandler<CreateDishCommand>
+    IAuthorizationService authorizationService) : IRequestHandler<CreateDishCommand>
 {
     public async Task Handle(CreateDishCommand request, CancellationToken cancellationToken)
     {
@@ -24,7 +24,7 @@ public class CreateDishCommandsHandler(
         var restaurant = await restaurantRepository.GetRestaurantByIdAsync(request.RestaurantId);
         if (restaurant is null) throw new NotFoundException(nameof(Restaurant), request.RestaurantId.ToString());
         
-        if (!authorisationService.Authorise(restaurant, ResourceOperation.Delete))
+        if (!authorizationService.Authorise(restaurant, ResourceOperation.Delete))
             throw new ForbiddenException("User does not have permission to update this restaurant");
 
         var dish = mapper.Map<Dish>(request);

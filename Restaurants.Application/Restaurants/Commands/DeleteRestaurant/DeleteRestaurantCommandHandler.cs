@@ -11,7 +11,7 @@ namespace Restaurants.Application.Restaurants.Commands.DeleteRestaurant;
 public class DeleteRestaurantCommandHandler(
     ILogger<DeleteRestaurantCommandHandler> logger, 
     IRestaurantRepository restaurantRepository,
-    IAuthorisationService authorisationService) : IRequestHandler<DeleteRestaurantCommand>
+    IAuthorizationService authorizationService) : IRequestHandler<DeleteRestaurantCommand>
 {
     public async Task Handle(DeleteRestaurantCommand request, CancellationToken cancellationToken)
     {
@@ -20,7 +20,7 @@ public class DeleteRestaurantCommandHandler(
         if (restaurant is null)
             throw new NotFoundException(nameof(Restaurant), request.Id.ToString());
         
-        if (!authorisationService.Authorise(restaurant, ResourceOperation.Delete))
+        if (!authorizationService.Authorise(restaurant, ResourceOperation.Delete))
             throw new ForbiddenException("User does not have permission to delete this restaurant");
             
         await restaurantRepository.DeleteRestaurantAsync(restaurant);

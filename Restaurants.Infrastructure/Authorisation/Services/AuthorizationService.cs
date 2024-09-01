@@ -6,7 +6,7 @@ using Restaurants.Domain.IRepository;
 
 namespace Restaurants.Infrastructure.Authorisation.Services;
 
-public class AuthorisationService(ILogger<AuthorisationService> logger, UserContext userContext) : IAuthorisationService
+public class AuthorizationService(ILogger<AuthorizationService> logger, IUserContext userContext) : IAuthorizationService
 {
     public bool Authorise(Restaurant restaurant, ResourceOperation resourceOperation)
     {

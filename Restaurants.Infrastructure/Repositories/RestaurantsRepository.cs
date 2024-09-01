@@ -15,7 +15,19 @@ public class RestaurantsRepository(RestaurantDbContext context) : IRestaurantRep
             .ToListAsync();
         return restaurants;
     }
-
+    
+    public async Task<IEnumerable<Restaurant>> GetAllMatchingAsync(string? searchPhrase)
+    {
+        var searchPhraseToLower = searchPhrase?.ToLower();
+        
+        var restaurants = await context.Restaurants
+            .Where(r=> searchPhraseToLower == null || 
+                       (r.Name.ToLower().Contains(searchPhraseToLower) || r.Description.ToLower().Contains(searchPhraseToLower)))
+            .Include(r => r.Dishes)
+            .ToListAsync();
+        return restaurants;
+    }
+ 
     public async Task<Restaurant?> GetRestaurantByIdAsync(Guid id)
     {
         var restaurant = await context.Restaurants

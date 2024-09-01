@@ -5,12 +5,15 @@ using Restaurants.Domain.Entities;
 
 namespace Restaurants.Infrastructure.Authorisation;
 
-public class UserClaimsPrincipalFactory (UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IOptions<IdentityOptions> options): 
-    UserClaimsPrincipalFactory<User, IdentityRole>(userManager, roleManager, options)
+public class UserClaimsPrincipalFactory (
+    UserManager<User> userManager, 
+    RoleManager<IdentityRole> roleManager, 
+    IOptions<IdentityOptions> options): UserClaimsPrincipalFactory<User, IdentityRole>(userManager, roleManager, options)
 {
     public override async Task<ClaimsPrincipal> CreateAsync(User user)
     {
         var id = await GenerateClaimsAsync(user);
+        
         if (user.Nationality != null)
         {
             id.AddClaim(new Claim(AppClaimTypes.Nationality, user.Nationality));
@@ -20,6 +23,11 @@ public class UserClaimsPrincipalFactory (UserManager<User> userManager, RoleMana
         {
             id.AddClaim(new Claim(AppClaimTypes.DateOfBirth, user.DateOfBirth.Value.ToString("yyyy-MM-dd")));
         }
+        
+        // if (user.OwnedRestaurants.Count() >= 0)
+        // {
+        //     id.AddClaim(new Claim(AppClaimTypes.DateOfBirth, user.DateOfBirth.Value.ToString("yyyy-MM-dd")));
+        // }
 
         return new ClaimsPrincipal(id);
     }
