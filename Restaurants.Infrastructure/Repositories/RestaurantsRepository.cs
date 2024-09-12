@@ -1,4 +1,6 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Restaurants.Domain.Constants;
 using Restaurants.Domain.Entites;
 using Restaurants.Domain.Entities;
 using Restaurants.Domain.IRepository;
@@ -16,16 +18,37 @@ public class RestaurantsRepository(RestaurantDbContext context) : IRestaurantRep
         return restaurants;
     }
     
-    public async Task<IEnumerable<Restaurant>> GetAllMatchingAsync(string? searchPhrase)
+    public async Task<(IEnumerable<Restaurant>, int)> GetAllMatchingAsync(string? searchPhrase, int pageNumber, int pageSize, string? sortBy, SortDirection sortDirection)
     {
         var searchPhraseToLower = searchPhrase?.ToLower();
-        
-        var restaurants = await context.Restaurants
-            .Where(r=> searchPhraseToLower == null || 
-                       (r.Name.ToLower().Contains(searchPhraseToLower) || r.Description.ToLower().Contains(searchPhraseToLower)))
-            .Include(r => r.Dishes)
-            .ToListAsync();
-        return restaurants;
+
+        var baseQuery = context.Restaurants
+            .Where(r => searchPhraseToLower == null ||
+                        (r.Name.ToLower().Contains(searchPhraseToLower) || r.Description.ToLower().Contains(searchPhraseToLower)));
+            //.Include(r => r.Dishes);
+            
+            var totalCount = await baseQuery.CountAsync();
+
+            if(sortBy != null)
+            {
+                var columnsSelector = new Dictionary<string, Expression<Func<Restaurant, object>>>
+                {
+                    { nameof(Restaurant.Name), r => r.Name },
+                    { nameof(Restaurant.Description), r => r.Description },
+                    { nameof(Restaurant.Category), r => r.Category },
+                };
+
+                var selectedColumn = columnsSelector[sortBy];
+
+                baseQuery = sortDirection == SortDirection.Ascending ? baseQuery.OrderBy(selectedColumn) : baseQuery.OrderByDescending(selectedColumn);
+            }
+                
+            var restaurants = await baseQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+            
+        return (restaurants, totalCount);
     }
  
     public async Task<Restaurant?> GetRestaurantByIdAsync(Guid id)

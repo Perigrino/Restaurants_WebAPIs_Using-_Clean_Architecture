@@ -25,7 +25,7 @@ namespace Restaurants.API.Controller
         //[Authorize(Policy = PolicyNames.CreatedAtLeast2Restaurants)]
         public async Task<ActionResult<IEnumerable<RestaurantDto>>> GetAllRestaurants([FromQuery] GetAllRestaurantsQuery query)
         {
-            var restaurants = await mediator.Send( new GetAllRestaurantsQuery());
+            var restaurants = await mediator.Send(query);
             var finalResponse = new FinalResponse<object>
             {
                 StatusCode = 200,
