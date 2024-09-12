@@ -13,7 +13,8 @@ public  class GetAllRestaurantsQueryHandler(ILogger<GetAllRestaurantsQueryHandle
     public async Task<PageResults<RestaurantDto>> Handle(GetAllRestaurantsQuery request, CancellationToken cancellationToken)
     {
         logger.LogInformation("Getting all restaurants");
-        var (restaurant, totalCount) = await restaurantRepository.GetAllMatchingAsync(request.SearchPhrase, request.PageSize, request.PageNumber);
+        var (restaurant, totalCount) = await restaurantRepository
+            .GetAllMatchingAsync(request.SearchPhrase, request.PageSize, request.PageNumber, request.SortBy, request.SortDirection);
         var restaurantsDto = mapper.Map<IEnumerable<RestaurantDto>>(restaurant);
 
         var results = new PageResults<RestaurantDto>(restaurantsDto, totalCount, request.PageSize, request.PageNumber);
