@@ -18,38 +18,46 @@ public class RestaurantsRepository(RestaurantDbContext context) : IRestaurantRep
         return restaurants;
     }
     
-    public async Task<(IEnumerable<Restaurant>, int)> GetAllMatchingAsync(string? searchPhrase, int pageNumber, int pageSize, string? sortBy, SortDirection sortDirection)
+    /// <summary>
+/// Retrieves a paginated list of restaurants based on the provided search phrase, sorting options, and page details.
+/// </summary>
+/// <param name="searchPhrase">The search phrase to filter restaurants by name or description. If null, all restaurants are returned.</param>
+/// <param name="pageNumber">The page number to retrieve.</param>
+/// <param name="pageSize">The number of restaurants per page.</param>
+/// <param name="sortBy">The field to sort the restaurants by. If null, restaurants are returned in their default order.</param>
+/// <param name="sortDirection">The direction to sort the restaurants (Ascending or Descending).</param>
+/// <returns>A tuple containing the list of restaurants for the specified page and the total count of restaurants matching the search phrase.</returns>
+public async Task<(IEnumerable<Restaurant>, int)> GetAllMatchingAsync(string? searchPhrase, int pageNumber, int pageSize, string? sortBy, SortDirection sortDirection)
+{
+    var searchPhraseToLower = searchPhrase?.ToLower();
+
+    var baseQuery = context.Restaurants
+        .Where(r => searchPhraseToLower == null ||
+                    (r.Name.ToLower().Contains(searchPhraseToLower) || r.Description.ToLower().Contains(searchPhraseToLower)));
+            
+    var totalCount = await baseQuery.CountAsync();
+
+    if(sortBy != null)
     {
-        var searchPhraseToLower = searchPhrase?.ToLower();
+        var columnsSelector = new Dictionary<string, Expression<Func<Restaurant, object>>>
+        {
+            { nameof(Restaurant.Name), r => r.Name },
+            { nameof(Restaurant.Description), r => r.Description },
+            { nameof(Restaurant.Category), r => r.Category },
+        };
 
-        var baseQuery = context.Restaurants
-            .Where(r => searchPhraseToLower == null ||
-                        (r.Name.ToLower().Contains(searchPhraseToLower) || r.Description.ToLower().Contains(searchPhraseToLower)));
-            //.Include(r => r.Dishes);
-            
-            var totalCount = await baseQuery.CountAsync();
+        var selectedColumn = columnsSelector[sortBy];
 
-            if(sortBy != null)
-            {
-                var columnsSelector = new Dictionary<string, Expression<Func<Restaurant, object>>>
-                {
-                    { nameof(Restaurant.Name), r => r.Name },
-                    { nameof(Restaurant.Description), r => r.Description },
-                    { nameof(Restaurant.Category), r => r.Category },
-                };
-
-                var selectedColumn = columnsSelector[sortBy];
-
-                baseQuery = sortDirection == SortDirection.Ascending ? baseQuery.OrderBy(selectedColumn) : baseQuery.OrderByDescending(selectedColumn);
-            }
-                
-            var restaurants = await baseQuery
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-            
-        return (restaurants, totalCount);
+        baseQuery = sortDirection == SortDirection.Ascending ? baseQuery.OrderBy(selectedColumn) : baseQuery.OrderByDescending(selectedColumn);
     }
+                
+    var restaurants = await baseQuery
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+            
+    return (restaurants, totalCount);
+}
  
     public async Task<Restaurant?> GetRestaurantByIdAsync(Guid id)
     {

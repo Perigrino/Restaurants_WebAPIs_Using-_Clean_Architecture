@@ -2,7 +2,6 @@ using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Restaurants.Application.Users;
-using Restaurants.Domain.Entites;
 using Restaurants.Domain.Entities;
 using Restaurants.Domain.IRepository;
 
@@ -18,7 +17,7 @@ public class CreateRestaurantCommandsHandler(
     {
         var currentUser = userContext.GetCurrentUser();
         
-        logger.LogInformation("{UserName}: {UserID} is creating a new restaurant {@Restaurant}", currentUser.Email, currentUser.Id, request);
+        logger.LogInformation("{UserName}: {UserID} is creating a new restaurant {@Restaurant}", currentUser!.Email, currentUser.Id, request);
         
         var restaurant = mapper.Map<Restaurant>(request);
         restaurant.OwnerId = currentUser.Id;
