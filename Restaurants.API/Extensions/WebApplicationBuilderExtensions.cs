@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Newtonsoft.Json;
 using Restaurants.API.Middlewares;
 using Serilog;
@@ -25,19 +25,9 @@ public static class WebApplicationBuilderExtensions
                 //BearerFormat = "JWT",
                 Scheme = "bearer"
             });
-            opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+            opt.AddSecurityRequirement(document => new OpenApiSecurityRequirement
             {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    new string[]{}
-                }
+                [new OpenApiSecuritySchemeReference("Bearer", document)] = new List<string>()
             });
         });
         

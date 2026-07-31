@@ -13,15 +13,16 @@ public class UpdateUserDetailsCommandHandler(
 {
     public async Task Handle(UpdateUserDetailsCommand request, CancellationToken cancellationToken)
     {
-        var user = userContext.GetCurrentUser();
+        var user = userContext.GetCurrentUser()
+            ?? throw new InvalidOperationException("Current user context is not present");
 
-        logger.LogInformation("Updating user: {UserId}, with {@Request}", user!.Id, request);
+        logger.LogInformation("Updating user: {UserId}, with {@Request}", user.Id, request);
 
-        var dbUser = await userStore.FindByIdAsync(user!.Id, cancellationToken);
+        var dbUser = await userStore.FindByIdAsync(user.Id, cancellationToken);
 
         if (dbUser == null)
         {
-            throw new NotFoundException(nameof(User), user!.Id);
+            throw new NotFoundException(nameof(User), user.Id);
         }
 
         dbUser.Nationality = request.Nationality;

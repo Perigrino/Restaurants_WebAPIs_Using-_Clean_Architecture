@@ -1,4 +1,4 @@
-namespace RefsGuy.Contracts.Responses;
+namespace Restaurants.Application.Common;
 
 public class FinalResponse<T>
 {

@@ -23,11 +23,6 @@ public class UserClaimsPrincipalFactory (
         {
             id.AddClaim(new Claim(AppClaimTypes.DateOfBirth, user.DateOfBirth.Value.ToString("yyyy-MM-dd")));
         }
-        
-        // if (user.OwnedRestaurants.Count() >= 0)
-        // {
-        //     id.AddClaim(new Claim(AppClaimTypes.DateOfBirth, user.DateOfBirth.Value.ToString("yyyy-MM-dd")));
-        // }
 
         return new ClaimsPrincipal(id);
     }

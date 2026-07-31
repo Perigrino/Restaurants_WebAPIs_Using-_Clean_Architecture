@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Restaurants.Domain.Constants;
-using Restaurants.Domain.Entites;
 using Restaurants.Domain.Entities;
 using Restaurants.Infrastructure.Persistence;
 
@@ -10,6 +10,8 @@ internal class RestaurantSeeders (RestaurantDbContext dbContext) : IRestaurantSe
 {
     public async Task Seed()
     {
+        await dbContext.Database.MigrateAsync();
+
         if (await dbContext.Database.CanConnectAsync())
         {
             if (!dbContext.Restaurants.Any())

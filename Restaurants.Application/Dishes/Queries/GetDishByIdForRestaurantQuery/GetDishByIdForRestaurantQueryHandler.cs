@@ -2,7 +2,6 @@ using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Restaurants.Application.Dishes.Dtos;
-using Restaurants.Domain.Entites;
 using Restaurants.Domain.Entities;
 using Restaurants.Domain.Exceptions;
 using Restaurants.Domain.IRepository;
@@ -19,7 +18,7 @@ public class GetDishByIdForRestaurantQueryHandler(
     {
         logger.LogInformation("Retrieving dish with id {DishID} for restaurant with id: {RestaurantId}", request.DishId, request.RestaurantId);
         
-        var restaurant = await restaurantRepository.GetRestaurantByIdAsync(request.RestaurantId);
+        var restaurant = await restaurantRepository.GetRestaurantByIdAsync(request.RestaurantId, cancellationToken);
         if (restaurant == null) throw new NotFoundException(nameof(Restaurant), request.RestaurantId.ToString());
         
         var dish = restaurant.Dishes.FirstOrDefault(d => d.Id == request.DishId);

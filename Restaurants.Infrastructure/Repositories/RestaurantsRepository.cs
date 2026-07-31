@@ -1,7 +1,6 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Restaurants.Domain.Constants;
-using Restaurants.Domain.Entites;
 using Restaurants.Domain.Entities;
 using Restaurants.Domain.IRepository;
 using Restaurants.Infrastructure.Persistence;
@@ -10,104 +9,83 @@ namespace Restaurants.Infrastructure.Repositories;
 
 public class RestaurantsRepository(RestaurantDbContext context) : IRestaurantRepository
 {
-    public async Task<IEnumerable<Restaurant>> GetAllRestaurantsAsync()
+    private static readonly Dictionary<string, Expression<Func<Restaurant, object>>> SortColumns = new()
     {
-        var restaurants = await context.Restaurants
+        { nameof(Restaurant.Name), r => r.Name },
+        { nameof(Restaurant.Description), r => r.Description },
+        { nameof(Restaurant.Category), r => r.Category },
+    };
+
+    public async Task<IEnumerable<Restaurant>> GetAllRestaurantsAsync(CancellationToken cancellationToken = default)
+    {
+        return await context.Restaurants
             .Include(r => r.Dishes)
-            .ToListAsync();
-        return restaurants;
+            .ToListAsync(cancellationToken);
     }
-    
-    public async Task<(IEnumerable<Restaurant>, int)> GetAllMatchingAsync(string? searchPhrase, int pageNumber, int pageSize, string? sortBy, SortDirection sortDirection)
+
+    public async Task<(IEnumerable<Restaurant>, int)> GetAllMatchingAsync(string? searchPhrase, int pageNumber, int pageSize, string? sortBy, SortDirection sortDirection, CancellationToken cancellationToken = default)
     {
         var searchPhraseToLower = searchPhrase?.ToLower();
 
         var baseQuery = context.Restaurants
             .Where(r => searchPhraseToLower == null ||
                         (r.Name.ToLower().Contains(searchPhraseToLower) || r.Description.ToLower().Contains(searchPhraseToLower)));
-            //.Include(r => r.Dishes);
-            
-            var totalCount = await baseQuery.CountAsync();
 
-            if(sortBy != null)
-            {
-                var columnsSelector = new Dictionary<string, Expression<Func<Restaurant, object>>>
-                {
-                    { nameof(Restaurant.Name), r => r.Name },
-                    { nameof(Restaurant.Description), r => r.Description },
-                    { nameof(Restaurant.Category), r => r.Category },
-                };
+        var totalCount = await baseQuery.CountAsync(cancellationToken);
 
-                var selectedColumn = columnsSelector[sortBy];
+        if (sortBy != null && SortColumns.TryGetValue(sortBy, out var selectedColumn))
+        {
+            baseQuery = sortDirection == SortDirection.Ascending
+                ? baseQuery.OrderBy(selectedColumn)
+                : baseQuery.OrderByDescending(selectedColumn);
+        }
 
-                baseQuery = sortDirection == SortDirection.Ascending ? baseQuery.OrderBy(selectedColumn) : baseQuery.OrderByDescending(selectedColumn);
-            }
-                
-            var restaurants = await baseQuery
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-            
+        var restaurants = await baseQuery
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
         return (restaurants, totalCount);
     }
- 
-    public async Task<Restaurant?> GetRestaurantByIdAsync(Guid id)
+
+    public async Task<Restaurant?> GetRestaurantByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var restaurant = await context.Restaurants
+        return await context.Restaurants
             .Include(r => r.Dishes)
-            .FirstOrDefaultAsync(r => r.Id == id);
-        if (restaurant != null) 
-            return restaurant;
-        
-        return null;
+            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
     }
 
-    public async Task<Guid?> CreateRestaurantAsync(Restaurant? restaurant)
+    public async Task<Guid> CreateRestaurantAsync(Restaurant entity, CancellationToken cancellationToken = default)
     {
-        if (restaurant != null)
-        {
-            await context.Restaurants.AddAsync(restaurant);
-            await context.SaveChangesAsync();
-            return restaurant.Id;
-        }
-        return null;
+        await context.Restaurants.AddAsync(entity, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+        return entity.Id;
     }
 
-    public async Task<Guid?> UpdateRestaurantAsync(Restaurant? restaurant)
-{
-    if (restaurant != null)
+    public async Task UpdateRestaurantAsync(Restaurant entity, CancellationToken cancellationToken = default)
     {
-        context.Restaurants.Update(restaurant);
-        await context.SaveChangesAsync();
-        return restaurant.Id;
+        context.Restaurants.Update(entity);
+        await context.SaveChangesAsync(cancellationToken);
     }
-    return null;
-}
 
-    public async Task DeleteRestaurantAsync(Restaurant entity)
+    public async Task DeleteRestaurantAsync(Restaurant entity, CancellationToken cancellationToken = default)
     {
         context.Restaurants.Remove(entity);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<bool> DoesRestaurantExistByIdAsync(Guid id)
+    public async Task<bool> DoesRestaurantExistByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var restaurantExists = await context.Restaurants
-            .AnyAsync(r => r.Id == id);
-    
-        return restaurantExists;
+        return await context.Restaurants.AnyAsync(r => r.Id == id, cancellationToken);
     }
 
-    public async Task<bool> DoesRestaurantExistByNameAsync(string name)
+    public async Task<bool> DoesRestaurantExistByNameAsync(string name, CancellationToken cancellationToken = default)
     {
-        var restaurantExists = await context.Restaurants
-            .AnyAsync(r => r.Name == name);
-    
-        return restaurantExists;
+        return await context.Restaurants.AnyAsync(r => r.Name == name, cancellationToken);
     }
 
-    public async Task SaveChangesAsync()
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

@@ -1,7 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RefsGuy.Contracts.Responses;
+using Restaurants.Application.Common;
 using Restaurants.Application.Users.Commands.AssignRole;
 using Restaurants.Application.Users.Commands.UnassignUserRole;
 using Restaurants.Application.Users.Commands.UpdateUserDetails;
@@ -14,75 +14,33 @@ namespace Restaurants.API.Controller
     [Authorize]
     public class IdentityController(IMediator mediator) : ControllerBase
     {
-        
         [HttpPut("user")]
-        public async Task<IActionResult> UpdateUserDetails ([FromBody] UpdateUserDetailsCommand command)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> UpdateUserDetails([FromBody] UpdateUserDetailsCommand command)
         {
             await mediator.Send(command);
-            var finalResponse = new FinalResponse<object>
-            {
-                StatusCode = 204,
-                Message = "User details have been updated successfully.",
-                Data = null
-            };
-            return Ok(finalResponse);
+            return NoContent();
         }
-        
-        
+
+
         [HttpPost("userRole")]
         [Authorize(Roles = UserRoles.Administrator)]
-        public async Task<IActionResult> AssignUserRole ([FromBody] AssignRoleCommand command)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> AssignUserRole([FromBody] AssignRoleCommand command)
         {
             await mediator.Send(command);
-            var finalResponse = new FinalResponse<object>
-            {
-                StatusCode = 204,
-                Message = "User role has been assigned successfully.",
-                Data = null
-            };
-            return Ok(finalResponse);
+            return NoContent();
         }
-        
-        
+
+
         // DELETE api/<IdentityController>/5
         [HttpDelete]
         [Authorize(Roles = UserRoles.Administrator)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> UnassignUserRole([FromBody] UnassignUserRoleCommand command)
         {
             await mediator.Send(command);
-            var finalResponse = new FinalResponse<object>
-            {
-                StatusCode = 204,
-                Message = "User role has been removed successfully.",
-                Data = null
-            };
-            return Ok(finalResponse);
+            return NoContent();
         }
-        
-        
-        // GET: api/<IdentityController>
-        // [HttpGet]
-        // public IEnumerable<string> Get()
-        // {
-        //     return new string[] { "value1", "value2" };
-        // }
-        //
-        // // GET api/<IdentityController>/5
-        // [HttpGet("{id}")]
-        // public string Get(int id)
-        // {
-        //     return "value";
-        // }
-        //
-        // // POST api/<IdentityController>
-        // [HttpPost]
-        // public void Post([FromBody] string value)
-        // {
-        // }
-
-        // PUT api/<IdentityController>/5
-
-        //
-    
     }
 }

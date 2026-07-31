@@ -1,6 +1,5 @@
-using System.Runtime.InteropServices.JavaScript;
 using Microsoft.AspNetCore.Identity;
-using Restaurants.Domain.Entites;
+using Restaurants.Domain.Entities;
 
 namespace Restaurants.Domain.Entities;
 

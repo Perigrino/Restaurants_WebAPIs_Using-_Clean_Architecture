@@ -1,7 +1,7 @@
 using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Restaurants.Domain.Entites;
+using Restaurants.Domain.Entities;
 using Restaurants.Domain.Exceptions;
 using Restaurants.Domain.IRepository;
 
@@ -9,23 +9,23 @@ using Restaurants.Domain.IRepository;
 namespace Restaurants.Application.Dishes.Commands.UpdateDish;
 
 public class UpdateDishCommandHandler (
-    IRestaurantRepository restaurantRepository, 
     IDishRepository dishRepository, 
     IMapper mapper, 
     ILogger<UpdateDishCommandHandler> logger) : IRequestHandler<UpdateDishCommand>
 {
     public async Task Handle(UpdateDishCommand request, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Updating dish with id: {DishId} with {@UpdatedDish}", request.Id, request);
-        var dish = await dishRepository.GetDishByIdAsync(request.Id);
+        logger.LogInformation("Updating dish with id: {DishId} for restaurant {RestaurantId} with {@UpdatedDish}", request.Id, request.RestaurantId, request);
+        var dish = await dishRepository.GetDishByIdAsync(request.Id, cancellationToken);
         if (dish == null)
             throw new NotFoundException(nameof(Dish), request.Id.ToString());
 
-        var mappedDish = mapper.Map(request, dish);
-        await dishRepository.UpdateDishByIdAsync(mappedDish);
+        if (dish.RestaurantId != request.RestaurantId)
+            throw new NotFoundException(nameof(Dish), request.Id.ToString());
 
-        await restaurantRepository.SaveChangesAsync();
-        logger.LogInformation("Dish with id: {DishId} has been updated successfully)", request.Id);
+        mapper.Map(request, dish);
+        await dishRepository.SaveChangesAsync(cancellationToken);
+        logger.LogInformation("Dish with id: {DishId} has been updated successfully", request.Id);
     }
 
 }

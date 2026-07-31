@@ -1,5 +1,5 @@
 using MediatR;
-using Restaurants.Domain.Entites;
+using Restaurants.Domain.Entities;
 
 namespace Restaurants.Application.Restaurants.Commands.UpdateRestaurant;
 

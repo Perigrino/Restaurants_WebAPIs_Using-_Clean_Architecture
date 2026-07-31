@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Restaurants.Application.Restaurants.Dtos;
 using Restaurants.Application.Restaurants.Queries.GetAllRestaurants;
-using Restaurants.Domain.Entites;
 using Restaurants.Domain.Entities;
 using Restaurants.Domain.Exceptions;
 using Restaurants.Domain.IRepository;
@@ -16,7 +15,7 @@ public class GetRestaurantByIdQueryHandler (ILogger<GetAllRestaurantsQueryHandle
     public async Task<RestaurantDto?> Handle(GetRestaurantByIdQuery request, CancellationToken cancellationToken)
     {
         logger.LogInformation("Getting restaurant by {RestaurantId}", request.Id);
-        var restaurant = await restaurantRepository.GetRestaurantByIdAsync(request.Id) ?? 
+        var restaurant = await restaurantRepository.GetRestaurantByIdAsync(request.Id, cancellationToken) ?? 
                          throw new NotFoundException(nameof(Restaurant), request.Id.ToString());
         
         var restaurantsDto = mapper.Map<RestaurantDto>(restaurant);

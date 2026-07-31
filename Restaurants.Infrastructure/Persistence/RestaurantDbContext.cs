@@ -2,19 +2,14 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using Restaurants.Domain.Entites;
 using Restaurants.Domain.Entities;
 
 namespace Restaurants.Infrastructure.Persistence;
 
 public class RestaurantDbContext(DbContextOptions options) : IdentityDbContext<User>(options)
 {
-    internal DbSet<Restaurant> Restaurants { get; set; }
-    internal DbSet<Dish> Dishes { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-    }
+    public DbSet<Restaurant> Restaurants { get; set; }
+    public DbSet<Dish> Dishes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -39,8 +34,10 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<RestaurantDbConte
     public RestaurantDbContext CreateDbContext(string[] args)
     {
         var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory()) // Assuming the appsettings.json file is in the same directory
-            .AddJsonFile(@Directory.GetCurrentDirectory() + "/../Restaurants.API/appsettings.json")
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: true)
+            .AddJsonFile(Path.Combine("..", "Restaurants.API", "appsettings.json"), optional: true)
+            .AddUserSecrets("restaurants-webapi")
             .Build();
         var connectionString = configuration.GetConnectionString("Default");
         var optionsBuilder = new DbContextOptionsBuilder<RestaurantDbContext>();

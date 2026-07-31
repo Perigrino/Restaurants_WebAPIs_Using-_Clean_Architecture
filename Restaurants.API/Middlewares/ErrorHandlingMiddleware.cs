@@ -11,63 +11,36 @@ public class ErrorHandlingMiddleware(ILogger<ErrorHandlingMiddleware> logger) : 
         {
             await next.Invoke(context);
         }
-
         catch (NotFoundException notFound)
         {
-            var traceId = Guid.NewGuid();
-            logger.LogError("Error occured while processing the request, TraceId : ${TraceId}, " +
-                            "Message : ${ExMessage}, StackTrace: ${ExStackTrace}", traceId, notFound.Message, notFound.StackTrace);
-
-            context.Response.StatusCode = StatusCodes.Status404NotFound;
-
-            var problemDetails = new ProblemDetails
-            {
-                Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
-                Title = "Not Found",
-                Status = (int)StatusCodes.Status404NotFound,
-                Instance = context.Request.Path,
-                Detail = $"Restaurant was not found, traceId : {traceId}",
-            };
-            await context.Response.WriteAsJsonAsync(problemDetails);
-
+            await HandleExceptionAsync(context, notFound, StatusCodes.Status404NotFound, "Not Found", notFound.Message, LogLevel.Warning);
         }
-
-        catch (ForbiddenException exception)
+        catch (ForbiddenException forbidden)
         {
-            var traceId = Guid.NewGuid();
-            logger.LogError("Error occured while processing the request, TraceId : ${TraceId}, " +
-                            "Message : ${ExMessage}, StackTrace: ${ExStackTrace}", traceId, exception.Message, exception.StackTrace);
-
-            context.Response.StatusCode = StatusCodes.Status403Forbidden;
-            var problemDetails = new ProblemDetails
-            {
-                Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
-                Title = "Internal Server Error",
-                Status = (int)StatusCodes.Status403Forbidden,
-                Instance = context.Request.Path,
-                Detail = $"Access denied. You do not have permission to access this resource, traceId : {traceId}",
-            };
-            await context.Response.WriteAsJsonAsync(problemDetails);
+            await HandleExceptionAsync(context, forbidden, StatusCodes.Status403Forbidden, "Forbidden", forbidden.Message, LogLevel.Warning);
         }
-        
-        
         catch (Exception ex)
         {
-            var traceId = Guid.NewGuid();
-            logger.LogError("Error occured while processing the request, TraceId : ${TraceId}, " +
-                            "Message : ${ExMessage}, StackTrace: ${ExStackTrace}", traceId, ex.Message, ex.StackTrace);
-
-            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            var problemDetails = new ProblemDetails
-            {
-                Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
-                Title = "Internal Server Error",
-                Status = (int)StatusCodes.Status500InternalServerError,
-                Instance = context.Request.Path,
-                Detail = $"Internal server error occured, traceId : {traceId}",
-            };
-            await context.Response.WriteAsJsonAsync(problemDetails);
+            await HandleExceptionAsync(context, ex, StatusCodes.Status500InternalServerError, "Internal Server Error", "An unexpected error occurred", LogLevel.Error);
         }
-        
+    }
+
+    private async Task HandleExceptionAsync(HttpContext context, Exception exception, int statusCode, string title, string detail, LogLevel logLevel)
+    {
+        var traceId = context.TraceIdentifier;
+        logger.Log(logLevel, exception, "Error occurred while processing the request, TraceId: {TraceId}", traceId);
+
+        context.Response.StatusCode = statusCode;
+
+        var problemDetails = new ProblemDetails
+        {
+            Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+            Title = title,
+            Status = statusCode,
+            Instance = context.Request.Path,
+            Detail = $"{detail}, traceId : {traceId}",
+        };
+
+        await context.Response.WriteAsJsonAsync(problemDetails);
     }
 }

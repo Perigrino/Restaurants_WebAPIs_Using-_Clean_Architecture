@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Restaurants.Application.Users;
-using Serilog;
 
 namespace Restaurants.Infrastructure.Authorisation.Requirements;
 
@@ -12,6 +10,13 @@ internal class MinimumAgeRequirementHandler(ILogger<MinimumAgeRequirementHandler
     {
         var currentUser = userContext.GetCurrentUser();
 
+        if (currentUser == null)
+        {
+            logger.LogWarning("User context is not present");
+            context.Fail();
+            return Task.CompletedTask;
+        }
+
         logger.LogInformation("User: {Email}, date of birth {DoB} - Handling MinimumAgeRequirement", currentUser.Email, currentUser.DateOfBirth);
 
         if (currentUser.DateOfBirth == null)
@@ -20,7 +25,7 @@ internal class MinimumAgeRequirementHandler(ILogger<MinimumAgeRequirementHandler
             context.Fail();
             return Task.CompletedTask;
         }
-        if (currentUser.DateOfBirth.Value.AddYears(requirement.MinimumAge) <= DateOnly.FromDateTime((DateTime.Today)))
+        if (currentUser.DateOfBirth.Value.AddYears(requirement.MinimumAge) <= DateOnly.FromDateTime(DateTime.Today))
         {
             logger.LogInformation("Authorization succeeded");
             context.Succeed(requirement);
