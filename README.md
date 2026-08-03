@@ -345,7 +345,7 @@ Every endpoint returns a consistent envelope:
 ```json
 {
   "statusCode": 200,
-  "message": "Towns retrieved successfully.",
+  "message": "Resturants retrieved successfully.",
   "data": { }
 }
 ```
