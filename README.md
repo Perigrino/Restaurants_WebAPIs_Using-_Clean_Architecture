@@ -392,4 +392,4 @@ dotnet ef migrations add <MigrationName> --project Restaurants.Infrastructure --
 
 ## License
 
-This project does not currently specify a license.
+MIT License
